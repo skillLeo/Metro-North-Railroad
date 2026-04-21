@@ -1,0 +1,23 @@
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.4em 0.8em;
+  background: #1a1a2e;
+  border-bottom: 2px solid #f59e0b;
+  margin-bottom: 0.3em;
+}
+
+.section-arrow {
+  color: #f59e0b;
+  font-size: 0.9em;
+}
+
+.section-destination {
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 700;
+  font-size: 1.1em;
+  color: #f59e0b;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
