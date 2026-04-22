@@ -1,3 +1,4 @@
+// C:\xampp\htdocs\metro-north-board\frontend\src\pages\Board.jsx
 import { useState, useEffect, useRef } from 'react';
 import { useTrainData } from '../hooks/useTrainData';
 import SectionHeader from '../components/SectionHeader';

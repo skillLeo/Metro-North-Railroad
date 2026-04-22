@@ -1,4 +1,5 @@
 /* Shared grid columns — must match .board-column-labels in Board.css */
+/* C:\xampp\htdocs\metro-north-board\frontend\src\components\TrainRow.css */
 :root {
   --col-train:   4.5rem;
   --col-departs: 11rem;

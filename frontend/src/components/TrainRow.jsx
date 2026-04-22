@@ -1,3 +1,4 @@
+// C:\xampp\htdocs\metro-north-board\frontend\src\components\TrainRow.jsx
 import { useState, useEffect } from 'react';
 import FlipBoard from './FlipBoard';
 import './TrainRow.css';

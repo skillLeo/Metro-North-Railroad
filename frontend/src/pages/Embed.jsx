@@ -1,3 +1,4 @@
+// C:\xampp\htdocs\metro-north-board\frontend\src\pages\Embed.jsx
 import { useTrainData } from '../hooks/useTrainData';
 import SectionHeader from '../components/SectionHeader';
 import TrainRow from '../components/TrainRow';

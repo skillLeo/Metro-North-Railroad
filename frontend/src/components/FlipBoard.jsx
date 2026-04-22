@@ -1,3 +1,4 @@
+// C:\xampp\htdocs\metro-north-board\frontend\src\components\FlipBoard.jsx
 import { useEffect, useRef, useState } from 'react';
 import './FlipBoard.css';
 

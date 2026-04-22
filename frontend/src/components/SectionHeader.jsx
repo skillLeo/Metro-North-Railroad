@@ -1,3 +1,4 @@
+// C:\xampp\htdocs\metro-north-board\frontend\src\components\SectionHeader.jsx
 import './SectionHeader.css';
 
 export default function SectionHeader({ destination }) {
