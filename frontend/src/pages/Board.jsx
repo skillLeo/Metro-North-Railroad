@@ -1,42 +1,41 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTrainData } from '../hooks/useTrainData';
 import SectionHeader from '../components/SectionHeader';
 import TrainRow from '../components/TrainRow';
+import FlipBoard from '../components/FlipBoard';
 import './Board.css';
 
-const DUMMY = {
-  to_new_haven: [
-    { train: '1274', time: '3:42 PM', status: 'On Time' },
-    { train: '1276', time: '4:18 PM', status: 'Delayed 8 min' },
-    { train: '1278', time: '5:02 PM', status: 'On Time' },
-  ],
-  to_nyc: [
-    { train: '1201', time: '3:55 PM', status: 'On Time' },
-    { train: '1205', time: '4:30 PM', status: 'On Time' },
-    { train: '1209', time: '5:15 PM', status: 'Cancelled' },
-  ],
-};
-
-function Clock() {
-  const [time, setTime] = useState(() => formatTime(new Date()));
+function VestaClock() {
+  const [parts, setParts] = useState(() => timeParts(new Date()));
 
   useEffect(() => {
-    const t = setInterval(() => setTime(formatTime(new Date())), 1000);
+    const t = setInterval(() => setParts(timeParts(new Date())), 1000);
     return () => clearInterval(t);
   }, []);
 
-  return <span className="clock-display">{time}</span>;
+  return (
+    <div className="vesta-clock">
+      <FlipBoard value={parts.hhmm} minLength={5} />
+      <FlipBoard value={parts.ss}   minLength={2} />
+      <FlipBoard value={parts.ampm} minLength={2} />
+    </div>
+  );
 }
 
-function formatTime(d) {
-  return d.toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  });
+function timeParts(d) {
+  const h    = d.getHours();
+  const m    = d.getMinutes();
+  const s    = d.getSeconds();
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const h12  = h % 12 || 12;
+  return {
+    hhmm: `${String(h12).padStart(2, '0')}:${String(m).padStart(2, '0')}`,
+    ss:   `:${String(s).padStart(2, '0')}`,
+    ampm: ` ${ampm}`,
+  };
 }
 
-function TrainSection({ title, trains }) {
+function TrainSection({ title, trains, flipKeys }) {
   return (
     <div className="board-section">
       <SectionHeader destination={title} />
@@ -44,13 +43,25 @@ function TrainSection({ title, trains }) {
         <span>TRAIN</span>
         <span>DEPARTS</span>
         <span>STATUS</span>
+        <span>TRK</span>
       </div>
       <div className="board-rows">
         {!trains || trains.length === 0 ? (
           <div className="board-no-trains">NO DEPARTURES SCHEDULED</div>
         ) : (
           trains.map((t, i) => (
-            <TrainRow key={i} train={t.train} time={t.time} status={t.status} />
+            <TrainRow
+              key={i}
+              train={t.train}
+              time={t.time}
+              status={t.status}
+              platform={t.platform ?? null}
+              peak={t.peak ?? null}
+              bikes={t.bikes ?? null}
+              stops={t.stops ?? null}
+              showCountdown={i === 0}
+              flipKey={flipKeys ? flipKeys[i] : 0}
+            />
           ))
         )}
       </div>
@@ -60,33 +71,61 @@ function TrainSection({ title, trains }) {
 
 export default function Board() {
   const { data, loading, error, lastUpdated } = useTrainData();
-  const board = data ?? DUMMY;
+
+  const [nhFlipKeys,  setNhFlipKeys]  = useState([0, 0, 0]);
+  const [nycFlipKeys, setNycFlipKeys] = useState([0, 0, 0]);
+  const nhActiveRef  = useRef(0);
+  const nycActiveRef = useRef(1);
+  const nycTimerRef  = useRef(null);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setNhFlipKeys(prev => {
+        const next = [...prev];
+        next[nhActiveRef.current]++;
+        nhActiveRef.current = (nhActiveRef.current + 1) % 3;
+        return next;
+      });
+      nycTimerRef.current = setTimeout(() => {
+        setNycFlipKeys(prev => {
+          const next = [...prev];
+          next[nycActiveRef.current]++;
+          nycActiveRef.current = (nycActiveRef.current + 1) % 3;
+          return next;
+        });
+      }, 5000);
+    }, 30000);
+
+    return () => {
+      clearInterval(interval);
+      clearTimeout(nycTimerRef.current);
+    };
+  }, []);
 
   return (
     <div className="board-page">
+
       <header className="board-header">
+        <img src="/logo.jpeg" alt="Deep 6 Arcade" className="board-logo" />
         <div className="board-title">
           <span className="board-title-main">METRO NORTH RAILROAD</span>
-          <span className="board-title-sub">STRATFORD · LIVE DEPARTURES</span>
+          <span className="board-title-sub">STRATFORD &middot; LIVE DEPARTURES</span>
         </div>
-        <Clock />
+        <VestaClock />
       </header>
 
-      {loading && !board ? (
-        <div className="board-loading">
-          <span>LOADING&#8230;</span>
-        </div>
+      {loading && !data ? (
+        <div className="board-loading">LOADING&#8230;</div>
       ) : (
         <main className="board-main">
-          <TrainSection title="NEW HAVEN CT" trains={board?.to_new_haven} />
-          <div className="board-divider" />
-          <TrainSection title="NEW YORK CITY" trains={board?.to_nyc} />
+          <TrainSection title="NEW HAVEN CT"  trains={data?.to_new_haven} flipKeys={nhFlipKeys} />
+          <TrainSection title="NEW YORK CITY" trains={data?.to_nyc}       flipKeys={nycFlipKeys} />
         </main>
       )}
 
       {error && (
         <div className="board-error-banner">
-          ⚠ CONNECTION INTERRUPTED — SHOWING LAST KNOWN DATA
+          WARNING &mdash; CONNECTION INTERRUPTED &mdash; SHOWING LAST KNOWN DATA
         </div>
       )}
 
@@ -94,10 +133,11 @@ export default function Board() {
         <span>
           {lastUpdated
             ? `UPDATED ${lastUpdated.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`
-            : 'LOADING\u2026'}
+            : 'CONNECTING…'}
         </span>
         <span>MTA METRO-NORTH RAILROAD</span>
       </footer>
+
     </div>
   );
 }

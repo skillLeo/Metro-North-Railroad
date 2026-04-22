@@ -1,15 +1,28 @@
-.train-row {
-  display: flex;
-  align-items: center;
-  padding: 0.5em 0.8em;
-  border-bottom: 1px solid #1e1e2e;
-  background: #0d0d1a;
-  transition: background 0.2s;
-  gap: 1em;
+/* Shared grid columns — must match .board-column-labels in Board.css */
+:root {
+  --col-train:   4.5rem;
+  --col-departs: 11rem;
+  --col-status:  1fr;
+  --col-trk:     5rem;
+  --row-gap:     0.6rem;
+  --row-pad:     0.8rem;
 }
 
-.train-row:last-child {
+.train-row-wrapper {
+  border-bottom: 1px solid #1e1e2e;
+}
+
+.train-row-wrapper:last-child {
   border-bottom: none;
+}
+
+.train-row {
+  display: grid;
+  grid-template-columns: var(--col-train) var(--col-departs) var(--col-status) var(--col-trk);
+  column-gap: var(--row-gap);
+  align-items: center;
+  padding: 0.2em var(--row-pad);
+  background: #0d0d1a;
 }
 
 .train-col {
@@ -18,34 +31,89 @@
   color: #fde68a;
   letter-spacing: 0.05em;
   white-space: nowrap;
+  overflow: hidden;
 }
 
 .train-number {
-  min-width: 5ch;
   font-weight: 700;
 }
 
-.train-time {
-  flex: 1;
+.train-time-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2em;
+}
+
+.train-time-main {
   font-size: 1.05em;
 }
 
+.train-countdown {
+  font-size: 0.75em;
+  color: #60a5fa;
+  letter-spacing: 0.12em;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 700;
+}
+
 .train-status {
-  min-width: 16ch;
-  text-align: right;
   font-size: 0.9em;
-  padding: 0.15em 0.5em;
-  border-radius: 3px;
+  padding: 0.1em 0;
 }
 
-.status-ontime .flip-board {
-  color: #4ade80;
+.train-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.2em;
 }
 
-.status-delayed .flip-board {
-  color: #f59e0b;
+.train-platform {
+  font-size: 0.8em;
+  color: #94a3b8;
+  letter-spacing: 0.08em;
+  text-align: right;
 }
 
-.status-cancelled .flip-board {
-  color: #f87171;
+/* Status colors */
+.status-ontime    .flip-board { color: #4ade80; }
+.status-delayed   .flip-board { color: #f59e0b; }
+.status-cancelled .flip-board { color: #f87171; }
+
+.meta-badge {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.65em;
+  letter-spacing: 0.15em;
+  padding: 0.15em 0.55em;
+  border-radius: 2px;
+  font-weight: 700;
+}
+
+.badge-peak    { background: #1a1205; color: #f59e0b; border: 1px solid #78450a; }
+.badge-offpeak { background: #0d1117; color: #64748b; border: 1px solid #1e2a3a; }
+.badge-bikes   { background: #0a1a10; color: #4ade80; border: 1px solid #166534; }
+.badge-nobikes { background: #1a0a0a; color: #f87171; border: 1px solid #7f1d1d; }
+
+/* Stops row */
+.train-stops {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  overflow: hidden;
+  padding: 0.1em var(--row-pad) 0.2em calc(var(--row-pad) + var(--col-train) + var(--row-gap));
+  background: #080812;
+}
+
+.train-stop {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.63em;
+  color: #4a5568;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.stop-sep {
+  color: #2d3748;
+  margin: 0 0.4em;
 }

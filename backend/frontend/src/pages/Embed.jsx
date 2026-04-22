@@ -7,28 +7,12 @@ function TrainSection({ title, trains }) {
   return (
     <div className="embed-section">
       <SectionHeader destination={title} />
-      <div className="embed-column-labels">
-        <span>TRAIN</span>
-        <span>DEPARTS</span>
-        <span>STATUS</span>
-        <span>TRK</span>
-      </div>
       <div className="embed-rows">
         {!trains || trains.length === 0 ? (
           <div className="embed-no-trains">NO DEPARTURES SCHEDULED</div>
         ) : (
           trains.map((t, i) => (
-            <TrainRow
-              key={i}
-              train={t.train}
-              time={t.time}
-              status={t.status}
-              platform={t.platform ?? null}
-              peak={t.peak ?? null}
-              bikes={t.bikes ?? null}
-              stops={t.stops ?? null}
-              showCountdown={i === 0}
-            />
+            <TrainRow key={i} train={t.train} time={t.time} status={t.status} />
           ))
         )}
       </div>
@@ -42,7 +26,7 @@ export default function Embed() {
   return (
     <div className="embed-page">
       <div className="embed-header">
-        <span className="embed-title">METRO NORTH &middot; STRATFORD DEPARTURES</span>
+        <span className="embed-title">METRO NORTH · STRATFORD DEPARTURES</span>
         {error && <span className="embed-error-dot" title="Connection interrupted" />}
       </div>
 
@@ -50,12 +34,12 @@ export default function Embed() {
         <div className="embed-loading">LOADING&#8230;</div>
       ) : (
         <div className="embed-main">
-          <TrainSection title="NEW HAVEN CT"  trains={data?.to_new_haven} />
+          <TrainSection title="NEW HAVEN CT" trains={data?.to_new_haven} />
           <TrainSection title="NEW YORK CITY" trains={data?.to_nyc} />
         </div>
       )}
 
-      <div className="embed-footer">LIVE &middot; UPDATES EVERY 15 SEC</div>
+      <div className="embed-footer">LIVE · UPDATES EVERY 15 SEC</div>
     </div>
   );
 }

@@ -69,7 +69,7 @@ class MetroNorthService
                 continue;
             }
 
-            $tripId       = $trip->getTripId();
+            $tripId      = $trip->getTripId();
             $vehicleLabel = $tripUpdate->getVehicle()?->getLabel() ?? '';
             $trainNumber  = $vehicleLabel ?: $tripId;
 
@@ -134,13 +134,8 @@ class MetroNorthService
                     if ($bikes === null && $peak !== null) {
                         $bikes = !$peak;
                     }
-                } elseif (is_string($schedInfo) && $schedInfo !== '') {
-                    $trainName = $schedInfo;
-                    $peak      = null;
-                    $bikes     = null;
-                    $stops     = [];
                 } else {
-                    $trainName = $trainNumber;
+                    $trainName = $schedInfo ?: $trainNumber;
                     $peak      = null;
                     $bikes     = null;
                     $stops     = [];
@@ -255,7 +250,7 @@ class MetroNorthService
             $tidIdx = array_search('trip_id',        $header);
             $snIdx  = array_search('trip_short_name',$header);
             $rIdx   = array_search('route_id',        $header);
-            $pkIdx  = array_search('peak_offpeak',    $header);
+            $pkIdx  = array_search('peak_offpeak',    $header); // may not exist
             $bkIdx  = array_search('bikes_allowed',   $header);
 
             $tripInfo = [];
@@ -293,7 +288,7 @@ class MetroNorthService
             $stratfordStop = (string) env('STRATFORD_STOP_ID', '143');
 
             // ── 3. stop_times.txt pass 1: find Stratford departure per trip ──
-            $stratfordEntries = [];
+            $stratfordEntries = []; // trip_id => [secs, seq]
 
             $stream = $zip->getStream('stop_times.txt');
             $stHeader = str_getcsv(trim(fgets($stream)));
@@ -321,10 +316,10 @@ class MetroNorthService
             fclose($stream);
 
             // ── 4. stop_times.txt pass 2: collect subsequent stops ───────────
-            $tripStops = [];
+            $tripStops = []; // trip_id => [seq => stop_name]
 
             $stream = $zip->getStream('stop_times.txt');
-            fgets($stream);
+            fgets($stream); // skip header
 
             while (($line = fgets($stream)) !== false) {
                 $line = trim($line);
@@ -332,11 +327,11 @@ class MetroNorthService
                 $cols   = str_getcsv($line);
                 $tid    = $cols[$stTidIdx] ?? '';
                 if (!isset($stratfordEntries[$tid])) continue;
-                $seq      = (int)($cols[$stSeqIdx] ?? 0);
-                $stratSeq = $stratfordEntries[$tid]['seq'];
+                $seq        = (int)($cols[$stSeqIdx] ?? 0);
+                $stratSeq   = $stratfordEntries[$tid]['seq'];
                 if ($seq <= $stratSeq) continue;
-                $sid      = (string)($cols[$stStopIdx] ?? '');
-                $stopName = $stopNames[$sid] ?? $sid;
+                $sid       = (string)($cols[$stStopIdx] ?? '');
+                $stopName  = $stopNames[$sid] ?? $sid;
                 $tripStops[$tid][$seq] = $stopName;
             }
             fclose($stream);

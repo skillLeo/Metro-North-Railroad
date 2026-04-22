@@ -3,26 +3,20 @@ import './FlipBoard.css';
 
 const FLIP_MS = 80;
 
-function FlipChar({ target, delay, flipKey }) {
+function FlipChar({ target, delay }) {
   const targetUpper = target.toUpperCase();
-  const displayChar = targetUpper === ' ' ? ' ' : targetUpper;
+  const displayChar = targetUpper === ' ' ? '\u00A0' : targetUpper;
 
   const [shown, setShown]         = useState(displayChar);
   const [animating, setAnimating] = useState(false);
-  const prevRef     = useRef(null);
-  const prevFlipKey = useRef(flipKey);
-  const timerRef    = useRef(null);
+  const prevRef  = useRef(null);
+  const timerRef = useRef(null);
 
   useEffect(() => {
     clearTimeout(timerRef.current);
 
-    const valueChanged = prevRef.current !== targetUpper;
-    const keyChanged   = prevFlipKey.current !== flipKey;
-
-    if (!valueChanged && !keyChanged) return;
-
-    prevRef.current     = targetUpper;
-    prevFlipKey.current = flipKey;
+    if (prevRef.current === targetUpper) return;
+    prevRef.current = targetUpper;
 
     timerRef.current = setTimeout(() => {
       setAnimating(true);
@@ -33,9 +27,9 @@ function FlipChar({ target, delay, flipKey }) {
     }, delay);
 
     return () => clearTimeout(timerRef.current);
-  }, [target, delay, flipKey, targetUpper, displayChar]);
+  }, [target, delay, targetUpper, displayChar]);
 
-  const isSpace = shown === ' ';
+  const isSpace = shown === '\u00A0';
   return (
     <span className={`flip-char${animating ? ' flip-animating' : ''}${isSpace ? ' flip-space' : ''}`}>
       {shown}
@@ -43,14 +37,14 @@ function FlipChar({ target, delay, flipKey }) {
   );
 }
 
-export default function FlipBoard({ value = '', minLength = 0, flipKey }) {
+export default function FlipBoard({ value = '', minLength = 0 }) {
   const str    = value.toUpperCase();
   const padded = str.padEnd(Math.max(minLength, str.length), ' ');
 
   return (
     <span className="flip-board">
       {padded.split('').map((char, i) => (
-        <FlipChar key={i} target={char} delay={i * 30} flipKey={flipKey} />
+        <FlipChar key={i} target={char} delay={i * 30} />
       ))}
     </span>
   );

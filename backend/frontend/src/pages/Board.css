@@ -1,119 +1,97 @@
-/* ── Board Page — fullscreen vertical TV display ── */
+/* ── Board Page — fullscreen TV display ── */
 
 .board-page {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  max-height: 100vh;
+  min-height: 100vh;
   background: #08080f;
   color: #fde68a;
   font-family: 'Courier New', Courier, monospace;
   overflow: hidden;
 }
 
-/* ── Header ── */
+/* Header */
 .board-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.45rem 1.5rem;
+  padding: 1rem 2rem;
   background: #0d0d1a;
   border-bottom: 3px solid #f59e0b;
-  gap: 1rem;
-  flex-shrink: 0;
-}
-
-.board-logo {
-  height: clamp(36px, 5vw, 72px);
-  width: auto;
-  object-fit: contain;
-  flex-shrink: 0;
 }
 
 .board-title {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 0.2em;
-  flex: 1;
+  gap: 0.15em;
 }
 
 .board-title-main {
-  font-size: clamp(0.85rem, 1.8vw, 1.5rem);
+  font-size: clamp(1.1rem, 2.5vw, 2rem);
   font-weight: 700;
   letter-spacing: 0.18em;
   color: #fde68a;
   text-transform: uppercase;
-  white-space: nowrap;
 }
 
 .board-title-sub {
-  font-size: clamp(0.58rem, 1vw, 0.85rem);
+  font-size: clamp(0.6rem, 1.2vw, 1rem);
   letter-spacing: 0.25em;
-  color: #d4920f;
+  color: #a16207;
   text-transform: uppercase;
-  white-space: nowrap;
 }
 
-/* ── Vesta flip clock ── */
-.vesta-clock {
-  font-size: clamp(0.9rem, 1.7vw, 1.5rem);
+.clock-display {
+  font-size: clamp(1.2rem, 2.5vw, 2.2rem);
   font-weight: 700;
   color: #f59e0b;
-  letter-spacing: 0.04em;
-  flex-shrink: 0;
+  letter-spacing: 0.08em;
 }
 
-/* ── Main — vertical stacked layout ── */
+/* Main content */
 .board-main {
   display: flex;
-  flex-direction: column;
   flex: 1;
-  min-height: 0;
-  gap: 0.5rem;
-  padding: 0.5rem 1.5rem;
+  gap: 0;
+  padding: 2rem;
+  gap: 2rem;
 }
 
 .board-section {
   flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
   background: #0a0a16;
   border: 1px solid #1e1e3a;
   border-radius: 4px;
   overflow: hidden;
 }
 
-/*
-  Column labels — grid MUST match TrainRow.css :root variables exactly:
-  --col-train: 4.5rem  --col-departs: 11rem  --col-status: 1fr  --col-trk: 5rem
-  --row-gap: 0.6rem    --row-pad: 0.8rem
-  Using rem so font-size difference between labels and rows has no effect.
-*/
 .board-column-labels {
-  display: grid;
-  grid-template-columns: 4.5rem 11rem 1fr 5rem;
-  column-gap: 0.6rem;
-  padding: 0.35em 0.8rem;
+  display: flex;
+  padding: 0.4em 0.8em;
+  gap: 1em;
   background: #050510;
-  font-size: 0.68em;
+  font-size: 0.7em;
   letter-spacing: 0.2em;
-  color: #b08a40;
+  color: #6b5c2e;
   text-transform: uppercase;
-  flex-shrink: 0;
+}
+
+.board-column-labels span:first-child {
+  min-width: 5ch;
+}
+
+.board-column-labels span:nth-child(2) {
+  flex: 1;
 }
 
 .board-column-labels span:last-child {
+  min-width: 16ch;
   text-align: right;
 }
 
 .board-rows {
   display: flex;
   flex-direction: column;
-  flex: 1;
-  min-height: 0;
-  overflow: hidden;
 }
 
 .board-no-trains {
@@ -124,7 +102,13 @@
   letter-spacing: 0.15em;
 }
 
-/* ── Loading ── */
+.board-divider {
+  width: 2px;
+  background: #1e1e3a;
+  margin: 0;
+}
+
+/* Loading */
 .board-loading {
   flex: 1;
   display: flex;
@@ -138,10 +122,10 @@
 
 @keyframes pulse {
   0%, 100% { opacity: 0.4; }
-  50%       { opacity: 1;   }
+  50% { opacity: 1; }
 }
 
-/* ── Error banner ── */
+/* Error banner */
 .board-error-banner {
   padding: 0.5em 2em;
   background: #1a0a0a;
@@ -150,57 +134,71 @@
   letter-spacing: 0.15em;
   text-align: center;
   border-top: 1px solid #7f1d1d;
-  flex-shrink: 0;
 }
 
-/* ── Footer ── */
+/* Footer */
 .board-footer {
   display: flex;
   justify-content: space-between;
-  padding: 0.4rem 1.5rem;
+  padding: 0.5rem 2rem;
   background: #050510;
   border-top: 1px solid #1e1e3a;
   font-size: 0.65em;
   letter-spacing: 0.2em;
   color: #3a3a5c;
   text-transform: uppercase;
-  flex-shrink: 0;
 }
 
 /* ── Responsive ── */
 
+/* Tablet */
+@media (max-width: 1199px) {
+  .board-main {
+    flex-direction: column;
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .board-divider {
+    width: 100%;
+    height: 2px;
+  }
+}
+
+/* Mobile */
 @media (max-width: 767px) {
   .board-header {
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-direction: column;
+    align-items: flex-start;
     gap: 0.5rem;
-    padding: 0.6rem 1rem;
-  }
-
-  .board-logo {
-    height: 34px;
-  }
-
-  .board-title {
-    order: -1;
-    flex: 0 0 100%;
+    padding: 0.75rem 1rem;
   }
 
   .board-main {
-    padding: 0.4rem 0.5rem;
-    gap: 0.4rem;
+    padding: 0.5rem;
+    gap: 0.75rem;
   }
 
   .board-footer {
     flex-direction: column;
     gap: 0.2em;
     align-items: center;
-    text-align: center;
   }
 }
 
+/* Large TV */
 @media (min-width: 1600px) {
-  .board-header { padding: 0.9rem 2.5rem; }
-  .board-main   { padding: 1rem 2.5rem; gap: 1rem; }
-  .board-footer { padding: 0.5rem 2.5rem; font-size: 0.75em; }
+  .board-header {
+    padding: 1.5rem 3rem;
+  }
+
+  .board-main {
+    padding: 2.5rem 3rem;
+    gap: 3rem;
+  }
+
+  .board-footer {
+    padding: 0.75rem 3rem;
+    font-size: 0.75em;
+  }
 }
