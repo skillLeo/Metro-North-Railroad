@@ -1,0 +1,63 @@
+.flip-board {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  gap: 2px;
+}
+
+.flip-char {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 700;
+  font-size: inherit;
+  color: inherit;
+  background: #111827;
+  border-radius: 3px;
+  min-width: 0.75ch;
+  height: 1.35em;
+  padding: 0 1px;
+  position: relative;
+  line-height: 1;
+
+  /* Horizontal center-line, like real split-flap tiles */
+  border-top: 1px solid #1c2333;
+  border-bottom: 1px solid #050810;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.04),
+    0 1px 3px rgba(0,0,0,0.6);
+}
+
+/* Space tiles are invisible — no dark box for padding */
+.flip-char.flip-space {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+.flip-char.flip-space::after {
+  display: none;
+}
+
+/* The center divider line */
+.flip-char::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(50% - 0.5px);
+  height: 1px;
+  background: rgba(0,0,0,0.7);
+  pointer-events: none;
+}
+
+/* Flip animation: scaleY 1→0→1, character swaps at midpoint */
+.flip-char.flip-animating {
+  animation: flipTile 0.08s linear;
+}
+
+@keyframes flipTile {
+  0%   { transform: scaleY(1);   }
+  49%  { transform: scaleY(0.05); }
+  51%  { transform: scaleY(0.05); }
+  100% { transform: scaleY(1);   }
+}
