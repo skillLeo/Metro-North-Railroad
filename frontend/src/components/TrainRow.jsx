@@ -22,7 +22,12 @@ function parseMs(timeStr) {
   if (ampm === 'AM' && h === 12) h = 0;
   const now = new Date();
   const dep = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0, 0);
-  const diff = dep - now;
+  let diff = dep - now;
+  // Time already passed today — check if it's tomorrow's train
+  if (diff <= 0) {
+    dep.setDate(dep.getDate() + 1);
+    diff = dep - now;
+  }
   return diff > 0 ? diff : null;
 }
 
@@ -42,26 +47,34 @@ function Countdown({ time }) {
     return () => clearInterval(t);
   }, [time]);
   if (!display) return null;
-  return <span className="train-countdown">{display}</span>;
+  return (
+    <div className="train-countdown-wrap">
+      <span className="train-countdown-label">NEXT IN</span>
+      <FlipBoard value={display} minLength={5} />
+    </div>
+  );
 }
 
 export default function TrainRow({ train, time, status, flipKey, showCountdown, platform, peak, bikes, stops }) {
   return (
     <div className="train-row-wrapper">
 
-      {/* ── Main row ── */}
+      {/* ── Main row: TRAIN | DEPARTS | META | STATUS ── */}
       <div className="train-row">
+
+        {/* col 1 — train number */}
         <div className="train-col train-number">
           <FlipBoard value={String(train)} minLength={4} flipKey={flipKey} />
         </div>
+
+        {/* col 2 — departure time + countdown */}
         <div className="train-col train-time-col">
           <FlipBoard value={String(time)} minLength={8} flipKey={flipKey} />
           {showCountdown && <Countdown time={time} />}
         </div>
-        <div className={`train-col train-status ${statusClass(status)}`}>
-          <FlipBoard value={String(status)} minLength={14} flipKey={flipKey} />
-        </div>
-        <div className="train-col train-right">
+
+        {/* col 3 — badges + track */}
+        <div className="train-col train-meta">
           {peak != null && (
             <span className={`meta-badge ${peak ? 'badge-peak' : 'badge-offpeak'}`}>
               {peak ? 'PEAK' : 'OFF-PK'}
@@ -76,16 +89,22 @@ export default function TrainRow({ train, time, status, flipKey, showCountdown, 
             <span className="train-platform">TRK {platform}</span>
           )}
         </div>
+
+        {/* col 4 — status (rightmost) */}
+        <div className={`train-col train-status ${statusClass(status)}`}>
+          <FlipBoard value={String(status)} minLength={12} flipKey={flipKey} />
+        </div>
+
       </div>
 
-      {/* ── Stops row ── */}
+      {/* ── Stops — vertical list; 3-col grid when stops > 4 (NYC-bound) ── */}
       {stops && stops.length > 0 && (
-        <div className="train-stops">
+        <div className={`train-stops${stops.length > 4 ? ' train-stops-grid' : ''}`}>
           {stops.map((s, i) => (
-            <span key={i} className="train-stop">
-              {i > 0 && <span className="stop-sep">&middot;</span>}
-              {s}
-            </span>
+            <div key={i} className="train-stop-row">
+              <span className="stop-bullet">&#8250;</span>
+              <FlipBoard value={s} minLength={s.length} flipKey={flipKey} />
+            </div>
           ))}
         </div>
       )}

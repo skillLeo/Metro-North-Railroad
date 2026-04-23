@@ -1,4 +1,6 @@
 /* C:\xampp\htdocs\metro-north-board\frontend\src\pages\Board.css */
+/* ── Board Page — fullscreen vertical portrait TV display ── */
+
 .board-page {
   display: flex;
   flex-direction: column;
@@ -15,7 +17,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.45rem 1.5rem;
+  padding: 0.6rem 1.5rem;
   background: #0d0d1a;
   border-bottom: 3px solid #f59e0b;
   gap: 1rem;
@@ -23,7 +25,7 @@
 }
 
 .board-logo {
-  height: clamp(36px, 5vw, 72px);
+  height: clamp(42px, 5vw, 80px);
   width: auto;
   object-fit: contain;
   flex-shrink: 0;
@@ -38,7 +40,7 @@
 }
 
 .board-title-main {
-  font-size: clamp(0.85rem, 1.8vw, 1.5rem);
+  font-size: clamp(1rem, 2.2vw, 1.8rem);
   font-weight: 700;
   letter-spacing: 0.18em;
   color: #fde68a;
@@ -47,7 +49,7 @@
 }
 
 .board-title-sub {
-  font-size: clamp(0.58rem, 1vw, 0.85rem);
+  font-size: clamp(0.65rem, 1.1vw, 1rem);
   letter-spacing: 0.25em;
   color: #d4920f;
   text-transform: uppercase;
@@ -56,7 +58,7 @@
 
 /* ── Vesta flip clock ── */
 .vesta-clock {
-  font-size: clamp(0.9rem, 1.7vw, 1.5rem);
+  font-size: clamp(1rem, 2vw, 1.8rem);
   font-weight: 700;
   color: #f59e0b;
   letter-spacing: 0.04em;
@@ -69,7 +71,7 @@
   flex-direction: column;
   flex: 1;
   min-height: 0;
-  gap: 0.5rem;
+  gap: 0;
   padding: 0.5rem 1.5rem;
 }
 
@@ -79,24 +81,31 @@
   display: flex;
   flex-direction: column;
   background: #0a0a16;
-  border: 1px solid #1e1e3a;
+  border: 1px solid #2a2a4a;
   border-radius: 4px;
   overflow: hidden;
 }
 
+/* Orange separator bar between the two sections */
+.board-section-sep {
+  height: 3px;
+  background: #f59e0b;
+  flex-shrink: 0;
+  margin: 0.4rem 0;
+}
+
 /*
-  Column labels — grid MUST match TrainRow.css :root variables exactly:
-  --col-train: 4.5rem  --col-departs: 11rem  --col-status: 1fr  --col-trk: 5rem
-  --row-gap: 0.6rem    --row-pad: 0.8rem
-  Using rem so font-size difference between labels and rows has no effect.
+  Column labels — grid MUST match TrainRow.css :root variables:
+  --col-train: 5.5rem  --col-departs: 13rem  --col-meta: 8rem  --col-status: 1fr
+  --row-gap: 0.8rem    --row-pad: 1.2rem
 */
 .board-column-labels {
   display: grid;
-  grid-template-columns: 4.5rem 11rem 1fr 5rem;
-  column-gap: 0.6rem;
-  padding: 0.35em 0.8rem;
+  grid-template-columns: 5.5rem 13rem 8rem 1fr;
+  column-gap: 0.8rem;
+  padding: 0.15em 1.2rem;
   background: #050510;
-  font-size: 0.68em;
+  font-size: 0.75rem;
   letter-spacing: 0.2em;
   color: #b08a40;
   text-transform: uppercase;
@@ -104,7 +113,7 @@
 }
 
 .board-column-labels span:last-child {
-  text-align: right;
+  text-align: left;
 }
 
 .board-rows {
@@ -119,7 +128,7 @@
   padding: 2em 1em;
   text-align: center;
   color: #3a3a5c;
-  font-size: 0.85em;
+  font-size: 1rem;
   letter-spacing: 0.15em;
 }
 
@@ -145,7 +154,7 @@
   padding: 0.5em 2em;
   background: #1a0a0a;
   color: #f87171;
-  font-size: 0.75em;
+  font-size: 0.8rem;
   letter-spacing: 0.15em;
   text-align: center;
   border-top: 1px solid #7f1d1d;
@@ -155,15 +164,28 @@
 /* ── Footer ── */
 .board-footer {
   display: flex;
-  justify-content: space-between;
-  padding: 0.4rem 1.5rem;
+  flex-direction: column;
+  padding: 0.3rem 1.5rem;
   background: #050510;
   border-top: 1px solid #1e1e3a;
-  font-size: 0.65em;
+  flex-shrink: 0;
+  gap: 0.15em;
+}
+
+.board-footer-note {
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: #5a5a3c;
+  text-align: center;
+}
+
+.board-footer-main {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.6rem;
   letter-spacing: 0.2em;
   color: #3a3a5c;
   text-transform: uppercase;
-  flex-shrink: 0;
 }
 
 /* ── Responsive ── */
@@ -173,12 +195,10 @@
     flex-wrap: wrap;
     justify-content: center;
     gap: 0.5rem;
-    padding: 0.6rem 1rem;
+    padding: 0.5rem 1rem;
   }
 
-  .board-logo {
-    height: 34px;
-  }
+  .board-logo { height: 36px; }
 
   .board-title {
     order: -1;
@@ -186,20 +206,12 @@
   }
 
   .board-main {
-    padding: 0.4rem 0.5rem;
-    gap: 0.4rem;
-  }
-
-  .board-footer {
-    flex-direction: column;
-    gap: 0.2em;
-    align-items: center;
-    text-align: center;
+    padding: 0.3rem 0.5rem;
   }
 }
 
 @media (min-width: 1600px) {
-  .board-header { padding: 0.9rem 2.5rem; }
-  .board-main   { padding: 1rem 2.5rem; gap: 1rem; }
-  .board-footer { padding: 0.5rem 2.5rem; font-size: 0.75em; }
+  .board-header { padding: 0.8rem 2.5rem; }
+  .board-main   { padding: 0.6rem 2.5rem; }
+  .board-footer { padding: 0.4rem 2.5rem; }
 }

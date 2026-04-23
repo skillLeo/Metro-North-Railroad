@@ -10,9 +10,9 @@ function TrainSection({ title, trains }) {
       <SectionHeader destination={title} />
       <div className="embed-column-labels">
         <span>TRAIN</span>
-        <span>DEPARTS</span>
-        <span>STATUS</span>
+        <span>DEPARTS / ARRIVES</span>
         <span>TRK</span>
+        <span>STATUS</span>
       </div>
       <div className="embed-rows">
         {!trains || trains.length === 0 ? (
@@ -27,7 +27,7 @@ function TrainSection({ title, trains }) {
               platform={t.platform ?? null}
               peak={t.peak ?? null}
               bikes={t.bikes ?? null}
-              stops={t.stops ?? null}
+              stops={null}
               showCountdown={i === 0}
             />
           ))
@@ -43,7 +43,7 @@ export default function Embed() {
   return (
     <div className="embed-page">
       <div className="embed-header">
-        <span className="embed-title">METRO NORTH &middot; STRATFORD DEPARTURES</span>
+        <span className="embed-title">METRO NORTH &middot; STRATFORD DEPARTURES/ARRIVALS</span>
         {error && <span className="embed-error-dot" title="Connection interrupted" />}
       </div>
 

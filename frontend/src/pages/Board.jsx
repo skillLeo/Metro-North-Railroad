@@ -42,9 +42,9 @@ function TrainSection({ title, trains, flipKeys }) {
       <SectionHeader destination={title} />
       <div className="board-column-labels">
         <span>TRAIN</span>
-        <span>DEPARTS</span>
-        <span>STATUS</span>
+        <span>DEPARTS / ARRIVES</span>
         <span>TRK</span>
+        <span>STATUS</span>
       </div>
       <div className="board-rows">
         {!trains || trains.length === 0 ? (
@@ -110,7 +110,7 @@ export default function Board() {
         <img src="/logo.jpeg" alt="Deep 6 Arcade" className="board-logo" />
         <div className="board-title">
           <span className="board-title-main">METRO NORTH RAILROAD</span>
-          <span className="board-title-sub">STRATFORD &middot; LIVE DEPARTURES</span>
+          <span className="board-title-sub">STRATFORD &middot; DEPARTURES / ARRIVALS</span>
         </div>
         <VestaClock />
       </header>
@@ -120,6 +120,7 @@ export default function Board() {
       ) : (
         <main className="board-main">
           <TrainSection title="NEW HAVEN CT"  trains={data?.to_new_haven} flipKeys={nhFlipKeys} />
+          <div className="board-section-sep" />
           <TrainSection title="NEW YORK CITY" trains={data?.to_nyc}       flipKeys={nycFlipKeys} />
         </main>
       )}
@@ -131,12 +132,17 @@ export default function Board() {
       )}
 
       <footer className="board-footer">
-        <span>
-          {lastUpdated
-            ? `UPDATED ${lastUpdated.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`
-            : 'CONNECTING…'}
-        </span>
-        <span>MTA METRO-NORTH RAILROAD</span>
+        <div className="board-footer-note">
+          *Departure times automatically update to account for delays.
+        </div>
+        <div className="board-footer-main">
+          <span>
+            {lastUpdated
+              ? `UPDATED ${lastUpdated.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`
+              : 'CONNECTING…'}
+          </span>
+          <span>MTA METRO-NORTH RAILROAD</span>
+        </div>
       </footer>
 
     </div>

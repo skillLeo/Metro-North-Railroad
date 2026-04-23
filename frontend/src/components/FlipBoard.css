@@ -51,14 +51,14 @@
   pointer-events: none;
 }
 
-/* Flip animation: scaleY 1→0→1, character swaps at midpoint */
+/* Flip animation: scaleY 1→0→1, character swaps at midpoint — 104ms (30% slower) */
 .flip-char.flip-animating {
-  animation: flipTile 0.08s linear;
+  animation: flipTile 0.104s linear;
 }
 
 @keyframes flipTile {
-  0%   { transform: scaleY(1);   }
+  0%   { transform: scaleY(1);    }
   49%  { transform: scaleY(0.05); }
   51%  { transform: scaleY(0.05); }
-  100% { transform: scaleY(1);   }
+  100% { transform: scaleY(1);    }
 }
