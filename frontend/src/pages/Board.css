@@ -51,7 +51,7 @@
 .board-title-sub {
   font-size: clamp(0.65rem, 1.1vw, 1rem);
   letter-spacing: 0.25em;
-  color: #d4920f;
+  color: #f0a820;
   text-transform: uppercase;
   white-space: nowrap;
 }
@@ -107,7 +107,7 @@
   background: #050510;
   font-size: 0.75rem;
   letter-spacing: 0.2em;
-  color: #b08a40;
+  color: #c9a55c;
   text-transform: uppercase;
   flex-shrink: 0;
 }
