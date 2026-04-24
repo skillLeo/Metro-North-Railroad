@@ -161,7 +161,7 @@
 
 .train-stop-row .flip-board {
   font-family: 'Courier New', Courier, monospace;
-  font-size: clamp(0.85rem, 1.35vh, 1.35rem);
+  font-size: clamp(0.9rem, 1.65vh, 1.65rem);
   color: #e2e8f0;
   letter-spacing: 0.08em;
   text-transform: uppercase;
