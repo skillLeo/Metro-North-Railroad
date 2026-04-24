@@ -107,7 +107,7 @@ export default function Board() {
     <div className="board-page">
 
       <header className="board-header">
-        <img src="/logo.jpeg" alt="Deep 6 Arcade" className="board-logo" />
+        <img src="/logo.png" alt="Deep 6 Arcade" className="board-logo" />
         <div className="board-title">
           <span className="board-title-main">METRO NORTH RAILROAD</span>
           <span className="board-title-sub">STRATFORD &middot; DEPARTURES / ARRIVALS</span>
