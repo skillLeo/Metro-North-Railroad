@@ -93,9 +93,11 @@ export default function TrainRow({ train, time, status, flipKey, showCountdown, 
           {platform != null && (
             <span className="train-platform">TRACK {platform}</span>
           )}
-          {/* Arrival / Departure stacked — right before status column */}
-          <span className="meta-badge badge-arrival">ARRIVAL</span>
-          <span className="meta-badge badge-departure">DEPARTURE</span>
+          {/* Arrival + Departure side by side — right before status column */}
+          <div className="train-meta-badges">
+            <span className="meta-badge badge-arrival">ARRIVAL</span>
+            <span className="meta-badge badge-departure">DEPARTURE</span>
+          </div>
         </div>
 
         {/* col 4 — status (rightmost) */}
