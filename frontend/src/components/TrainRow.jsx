@@ -67,27 +67,35 @@ export default function TrainRow({ train, time, status, flipKey, showCountdown, 
           <FlipBoard value={String(train)} minLength={4} flipKey={flipKey} />
         </div>
 
-        {/* col 2 — departure time + countdown */}
+        {/* col 2 — departure time + countdown inline */}
         <div className="train-col train-time-col">
           <FlipBoard value={String(time)} minLength={8} flipKey={flipKey} />
           {showCountdown && <Countdown time={time} />}
         </div>
 
-        {/* col 3 — badges + track */}
+        {/* col 3 — peak/bikes | track | arrival/departure */}
         <div className="train-col train-meta">
-          {peak != null && (
-            <span className={`meta-badge ${peak ? 'badge-peak' : 'badge-offpeak'}`}>
-              {peak ? 'PEAK' : 'OFF-PK'}
-            </span>
-          )}
-          {bikes != null && (
-            <span className={`meta-badge ${bikes ? 'badge-bikes' : 'badge-nobikes'}`}>
-              {bikes ? 'BIKES' : 'NO BIKE'}
-            </span>
+          {/* Peak + Bikes side by side */}
+          {(peak != null || bikes != null) && (
+            <div className="train-meta-badges">
+              {peak != null && (
+                <span className={`meta-badge ${peak ? 'badge-peak' : 'badge-offpeak'}`}>
+                  {peak ? 'PEAK' : 'OFF-PEAK'}
+                </span>
+              )}
+              {bikes != null && (
+                <span className={`meta-badge ${bikes ? 'badge-bikes' : 'badge-nobikes'}`}>
+                  {bikes ? 'BIKES' : 'NO BIKES'}
+                </span>
+              )}
+            </div>
           )}
           {platform != null && (
-            <span className="train-platform">TRK {platform}</span>
+            <span className="train-platform">TRACK {platform}</span>
           )}
+          {/* Arrival / Departure stacked — right before status column */}
+          <span className="meta-badge badge-arrival">ARRIVAL</span>
+          <span className="meta-badge badge-departure">DEPARTURE</span>
         </div>
 
         {/* col 4 — status (rightmost) */}

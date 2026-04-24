@@ -1,10 +1,10 @@
 /* Shared grid — TRAIN | DEPARTS | META | STATUS
    rem units so columns stay fixed regardless of font-size on parent.
-   Board.css column labels use the same values. */
+   Board.css column labels reference the same CSS variables: var(--col-*) */
 :root {
-  --col-train:   5.5rem;
-  --col-departs: 13rem;
-  --col-meta:    8rem;
+  --col-train:   6rem;
+  --col-departs: 23rem;
+  --col-meta:    12rem;
   --col-status:  1fr;
   --row-gap:     0.8rem;
   --row-pad:     1.2rem;
@@ -28,28 +28,33 @@
   grid-template-columns: var(--col-train) var(--col-departs) var(--col-meta) var(--col-status);
   column-gap: var(--row-gap);
   align-items: center;
-  padding: 0.2em var(--row-pad);
+  padding: 0.15em var(--row-pad);
   background: #0d0d1a;
   flex-shrink: 0;
 }
 
 .train-col {
   font-family: 'Courier New', Courier, monospace;
-  font-size: clamp(0.95rem, 1.8vh, 1.8rem);
+  font-size: clamp(1.1rem, 2.8vh, 2.8rem);
   color: #fde68a;
   letter-spacing: 0.05em;
   white-space: nowrap;
   overflow: hidden;
 }
 
+/* White vertical line separates train number from departure time */
 .train-number {
   font-weight: 700;
+  border-right: 2px solid rgba(255, 255, 255, 0.28);
+  padding-right: 0.4em;
 }
 
+/* Departure time + countdown on the same line */
 .train-time-col {
   display: flex;
-  flex-direction: column;
-  gap: 0.25em;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.6em;
 }
 
 /* Countdown — flip-animated MM:SS */
@@ -57,6 +62,7 @@
   display: flex;
   align-items: center;
   gap: 0.4em;
+  flex-shrink: 0;
 }
 
 .train-countdown-label {
@@ -74,21 +80,25 @@
   font-weight: 700;
 }
 
-/* Meta column — badges stacked */
+/* Meta column — outer container stacks rows vertically */
 .train-meta {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.25em;
+  gap: 0.3em;
 }
 
-/* Status — rightmost, twice the size of train text */
-.train-status {
-  font-size: clamp(1.1rem, 2.8vh, 2.8rem);
+/* Peak + Bikes side by side on one line */
+.train-meta-badges {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.3em;
+  flex-wrap: wrap;
 }
 
 .train-platform {
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   color: #94a3b8;
   letter-spacing: 0.08em;
 }
@@ -101,7 +111,7 @@
 /* Badges */
 .meta-badge {
   font-family: 'Courier New', Courier, monospace;
-  font-size: 0.62em;
+  font-size: 0.9rem;
   letter-spacing: 0.1em;
   padding: 0.1em 0.4em;
   border-radius: 2px;
@@ -109,12 +119,14 @@
   white-space: nowrap;
 }
 
-.badge-peak    { background: #1a1205; color: #f59e0b; border: 1px solid #78450a; }
-.badge-offpeak { background: #0d1117; color: #64748b; border: 1px solid #1e2a3a; }
-.badge-bikes   { background: #0a1a10; color: #4ade80; border: 1px solid #166534; }
-.badge-nobikes { background: #1a0a0a; color: #f87171; border: 1px solid #7f1d1d; }
+.badge-peak      { background: #1a1205; color: #f59e0b; border: 1px solid #78450a; }
+.badge-offpeak   { background: #0d1117; color: #e2e8f0; border: 1px solid #475569; }
+.badge-bikes     { background: #0a1a10; color: #4ade80; border: 1px solid #166534; }
+.badge-nobikes   { background: #1a0a0a; color: #f87171; border: 1px solid #7f1d1d; }
+.badge-arrival   { background: #0a1a0a; color: #4ade80; border: 1px solid #166534; }
+.badge-departure { background: #1a0a0a; color: #f87171; border: 1px solid #7f1d1d; }
 
-/* Stops — vertical list, one stop per line, each flip-animated */
+/* Stops — vertical list below the main row */
 .train-stops {
   display: flex;
   flex-direction: column;
@@ -149,8 +161,8 @@
 
 .train-stop-row .flip-board {
   font-family: 'Courier New', Courier, monospace;
-  font-size: clamp(0.6rem, 1.1vh, 1.1rem);
-  color: #4a5568;
+  font-size: clamp(0.85rem, 1.35vh, 1.35rem);
+  color: #e2e8f0;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
