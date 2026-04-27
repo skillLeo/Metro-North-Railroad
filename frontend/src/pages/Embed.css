@@ -116,7 +116,7 @@
 
 .embed-page .train-row,
 .embed-column-labels {
-  grid-template-columns: 10% 28% 22% auto;
+  grid-template-columns: 10% 28% 30% auto;
   column-gap: 0.5rem;
 }
 
