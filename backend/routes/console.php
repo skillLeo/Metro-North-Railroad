@@ -11,8 +11,11 @@ Artisan::command('metro-north:refresh', function () {
 
 Artisan::command('metro-north:build-schedule', function () {
     $this->info('Downloading GTFS static data (this takes ~30 seconds)...');
-    $result = app(MetroNorthService::class)->buildStratfordScheduleCache();
+    $service = app(MetroNorthService::class);
+    $result = $service->buildStratfordScheduleCache();
     $this->info('Built schedule lookup: ' . count($result) . ' Stratford departures cached.');
+    $service->refreshCache();
+    $this->info('Board cache refreshed with new schedule data.');
 })->purpose('Build the Stratford departure schedule cache from static GTFS');
 
 // Refresh live feed every 30 seconds
