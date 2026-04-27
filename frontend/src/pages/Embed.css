@@ -105,3 +105,39 @@
   border-top: 1px solid #1e1e3a;
   text-transform: uppercase;
 }
+
+/* ── Embed-specific layout overrides ─────────────────────────────────────
+   Percentage columns (not rem) so 1fr STATUS always has space at any width.
+   Column order: TRAIN(10%) | DEPARTS(28%) | META/BADGES(28%) | STATUS(auto)
+   ──────────────────────────────────────────────────────────────────────── */
+.embed-page {
+  --row-pad: 0.6rem;
+}
+
+.embed-page .train-row,
+.embed-column-labels {
+  grid-template-columns: 10% 28% 28% auto;
+  column-gap: 0.5rem;
+}
+
+.embed-page .train-col {
+  font-size: clamp(0.55rem, 1.7vw, 0.9rem);
+}
+
+.embed-page .meta-badge {
+  font-size: 0.42rem;
+  padding: 0.03em 0.2em;
+  letter-spacing: 0.04em;
+}
+
+.embed-page .train-meta-badges {
+  gap: 0.15em;
+}
+
+.embed-page .train-countdown-label {
+  font-size: 0.38rem;
+}
+
+.embed-page .train-countdown-wrap .flip-board {
+  font-size: 0.7rem;
+}
