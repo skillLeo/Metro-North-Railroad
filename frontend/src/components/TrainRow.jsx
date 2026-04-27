@@ -89,9 +89,9 @@ export default function TrainRow({ train, time, status, flipKey, showCountdown, 
             <span className="meta-badge badge-arrival">ARRIVAL</span>
             <span className="meta-badge badge-departure">DEPARTURE</span>
           </div>
-          {platform != null && (
-            <span className="train-platform">TRACK {platform}</span>
-          )}
+          <span className={`train-platform ${platform == null ? 'track-tbd' : ''}`}>
+            TRACK {platform ?? 'TBD'}
+          </span>
         </div>
 
         {/* col 4 — status (rightmost) */}

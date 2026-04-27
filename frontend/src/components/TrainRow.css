@@ -103,6 +103,10 @@
   letter-spacing: 0.08em;
 }
 
+.train-platform.track-tbd {
+  color: #3a4a6b;
+}
+
 /* Status colors */
 .status-ontime    .flip-board { color: #4ade80; }
 .status-delayed   .flip-board { color: #f59e0b; }
