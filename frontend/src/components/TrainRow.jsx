@@ -73,31 +73,25 @@ export default function TrainRow({ train, time, status, flipKey, showCountdown, 
           {showCountdown && <Countdown time={time} />}
         </div>
 
-        {/* col 3 — peak/bikes | track | arrival/departure */}
+        {/* col 3 — all badges on one row | track */}
         <div className="train-col train-meta">
-          {/* Peak + Bikes side by side */}
-          {(peak != null || bikes != null) && (
-            <div className="train-meta-badges">
-              {peak != null && (
-                <span className={`meta-badge ${peak ? 'badge-peak' : 'badge-offpeak'}`}>
-                  {peak ? 'PEAK' : 'OFF-PEAK'}
-                </span>
-              )}
-              {bikes != null && (
-                <span className={`meta-badge ${bikes ? 'badge-bikes' : 'badge-nobikes'}`}>
-                  {bikes ? 'BIKES' : 'NO BIKES'}
-                </span>
-              )}
-            </div>
-          )}
-          {platform != null && (
-            <span className="train-platform">TRACK {platform}</span>
-          )}
-          {/* Arrival + Departure side by side — right before status column */}
           <div className="train-meta-badges">
+            {peak != null && (
+              <span className={`meta-badge ${peak ? 'badge-peak' : 'badge-offpeak'}`}>
+                {peak ? 'PEAK' : 'OFF-PEAK'}
+              </span>
+            )}
+            {bikes != null && (
+              <span className={`meta-badge ${bikes ? 'badge-bikes' : 'badge-nobikes'}`}>
+                {bikes ? 'BIKES' : 'NO BIKES'}
+              </span>
+            )}
             <span className="meta-badge badge-arrival">ARRIVAL</span>
             <span className="meta-badge badge-departure">DEPARTURE</span>
           </div>
+          {platform != null && (
+            <span className="train-platform">TRACK {platform}</span>
+          )}
         </div>
 
         {/* col 4 — status (rightmost) */}

@@ -4,7 +4,7 @@
 :root {
   --col-train:   6rem;
   --col-departs: 23rem;
-  --col-meta:    15rem;
+  --col-meta:    20rem;
   --col-status:  1fr;
   --row-gap:     0.8rem;
   --row-pad:     1.2rem;
@@ -111,7 +111,7 @@
 /* Badges */
 .meta-badge {
   font-family: 'Courier New', Courier, monospace;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   letter-spacing: 0.1em;
   padding: 0.05em 0.35em;
   border-radius: 2px;
@@ -155,14 +155,24 @@
 
 .stop-bullet {
   font-size: 0.85rem;
-  color: #3a4a6b;
+  color: #94a3b8;
   flex-shrink: 0;
 }
 
 .train-stop-row .flip-board {
   font-family: 'Courier New', Courier, monospace;
   font-size: clamp(0.9rem, 1.65vh, 1.65rem);
-  color: #e2e8f0;
+  color: #ffffff;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+/* Portrait TV — fix train number clipping and scale font down to fit */
+@media (orientation: portrait) and (min-width: 900px) {
+  :root {
+    --col-departs: 17rem;
+  }
+  .train-col {
+    font-size: clamp(0.9rem, 2vh, 2rem);
+  }
 }
