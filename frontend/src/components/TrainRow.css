@@ -94,7 +94,8 @@
   flex-direction: row;
   align-items: center;
   gap: 0.3em;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow: hidden;
 }
 
 .badge-track { background: #0d1117; color: #94a3b8; border: 1px solid #475569; }
