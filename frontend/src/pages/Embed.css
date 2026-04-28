@@ -55,8 +55,8 @@
 
 .embed-column-labels {
   display: grid;
-  grid-template-columns: var(--col-train) var(--col-departs) var(--col-meta) var(--col-status);
-  column-gap: var(--row-gap);
+  grid-template-columns: 10% 28% auto;
+  column-gap: 0.5rem;
   padding: 0.3em var(--row-pad);
   background: #050510;
   font-size: 0.65em;
@@ -66,7 +66,7 @@
 }
 
 .embed-column-labels span:last-child {
-  text-align: left;
+  text-align: right;
 }
 
 .embed-rows {
@@ -114,14 +114,17 @@
   --row-pad: 0.6rem;
 }
 
-.embed-page .train-row,
-.embed-column-labels {
-  grid-template-columns: 10% 28% 30% auto;
+.embed-page .train-row {
+  grid-template-columns: 10% 28% auto;
   column-gap: 0.5rem;
 }
 
 .embed-page .train-col {
   font-size: clamp(0.55rem, 1.7vw, 0.9rem);
+}
+
+.embed-page .train-badges-row {
+  padding: 0.1em 0.6rem 0.15em calc(0.6rem + 10% + 0.5rem);
 }
 
 .embed-page .meta-badge {
@@ -130,7 +133,7 @@
   letter-spacing: 0.04em;
 }
 
-.embed-page .train-meta-badges {
+.embed-page .train-badges-row {
   gap: 0.15em;
 }
 

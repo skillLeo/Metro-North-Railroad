@@ -11,7 +11,6 @@ function TrainSection({ title, trains }) {
       <div className="embed-column-labels">
         <span>TRAIN</span>
         <span>DEPARTS / ARRIVES</span>
-        <span>TRACK</span>
         <span>STATUS</span>
       </div>
       <div className="embed-rows">
