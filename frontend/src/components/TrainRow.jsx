@@ -59,7 +59,7 @@ export default function TrainRow({ train, time, status, flipKey, showCountdown, 
   return (
     <div className="train-row-wrapper">
 
-      {/* ── Main row: TRAIN | DEPARTS | META | STATUS ── */}
+      {/* ── Main row: TRAIN | DEPARTS | STATUS ── */}
       <div className="train-row">
 
         {/* col 1 — train number */}
@@ -67,38 +67,36 @@ export default function TrainRow({ train, time, status, flipKey, showCountdown, 
           <FlipBoard value={String(train)} minLength={4} flipKey={flipKey} />
         </div>
 
-        {/* col 2 — departure time + countdown inline */}
+        {/* col 2 — departure time only */}
         <div className="train-col train-time-col">
           <FlipBoard value={String(time)} minLength={8} flipKey={flipKey} />
-          {showCountdown && <Countdown time={time} />}
         </div>
 
-        {/* col 3 — all badges on one row | track */}
-        <div className="train-col train-meta">
-          <div className="train-meta-badges">
-            {peak != null && (
-              <span className={`meta-badge ${peak ? 'badge-peak' : 'badge-offpeak'}`}>
-                {peak ? 'PEAK' : 'OFF-PEAK'}
-              </span>
-            )}
-            {bikes != null && (
-              <span className={`meta-badge ${bikes ? 'badge-bikes' : 'badge-nobikes'}`}>
-                {bikes ? 'BIKES' : 'NO BIKES'}
-              </span>
-            )}
-            <span className="meta-badge badge-arrival">ARRIVAL</span>
-            <span className="meta-badge badge-departure">DEPARTURE</span>
-            {platform != null && (
-              <span className="meta-badge badge-track">TRACK {platform}</span>
-            )}
-          </div>
-        </div>
-
-        {/* col 4 — status (rightmost) */}
+        {/* col 3 — status pushed to far right */}
         <div className={`train-col train-status ${statusClass(status)}`}>
           <FlipBoard value={String(status)} minLength={12} flipKey={flipKey} />
         </div>
 
+      </div>
+
+      {/* ── Badges row: countdown + all badges on their own line ── */}
+      <div className="train-badges-row">
+        {showCountdown && <Countdown time={time} />}
+        {peak != null && (
+          <span className={`meta-badge ${peak ? 'badge-peak' : 'badge-offpeak'}`}>
+            {peak ? 'PEAK' : 'OFF-PEAK'}
+          </span>
+        )}
+        {bikes != null && (
+          <span className={`meta-badge ${bikes ? 'badge-bikes' : 'badge-nobikes'}`}>
+            {bikes ? 'BIKES' : 'NO BIKES'}
+          </span>
+        )}
+        <span className="meta-badge badge-arrival">ARRIVAL</span>
+        <span className="meta-badge badge-departure">DEPARTURE</span>
+        {platform != null && (
+          <span className="meta-badge badge-track">TRACK {platform}</span>
+        )}
       </div>
 
       {/* ── Stops — vertical list; 3-col grid when stops > 4 (NYC-bound) ── */}

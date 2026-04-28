@@ -98,15 +98,15 @@
 
 /*
   Column labels — grid uses same CSS variables as TrainRow.css :root
-  --col-train: 6rem  --col-departs: 23rem  --col-meta: 12rem  --col-status: 1fr
+  --col-train: 4.5rem  --col-departs: 14rem  --col-status: 1fr
 */
 .board-column-labels {
   display: grid;
-  grid-template-columns: var(--col-train) var(--col-departs) var(--col-meta) var(--col-status);
+  grid-template-columns: var(--col-train) var(--col-departs) var(--col-status);
   column-gap: var(--row-gap);
   padding: 0.15em var(--row-pad);
   background: #050510;
-  font-size: 1.5rem;
+  font-size: 0.85rem;
   letter-spacing: 0.2em;
   color: #c9a55c;
   text-transform: uppercase;
@@ -114,7 +114,8 @@
 }
 
 .board-column-labels span:last-child {
-  text-align: left;
+  text-align: right;
+  padding-right: 0.4em;
 }
 
 .board-rows {

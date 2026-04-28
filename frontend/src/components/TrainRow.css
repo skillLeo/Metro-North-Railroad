@@ -1,10 +1,9 @@
-/* Shared grid — TRAIN | DEPARTS | META | STATUS
+/* Shared grid — TRAIN | DEPARTS | STATUS
    rem units so columns stay fixed regardless of font-size on parent.
    Board.css column labels reference the same CSS variables: var(--col-*) */
 :root {
-  --col-train:   6rem;
-  --col-departs: 23rem;
-  --col-meta:    20rem;
+  --col-train:   5.2rem;
+  --col-departs: 14rem;
   --col-status:  1fr;
   --row-gap:     0.8rem;
   --row-pad:     1.2rem;
@@ -25,7 +24,7 @@
 
 .train-row {
   display: grid;
-  grid-template-columns: var(--col-train) var(--col-departs) var(--col-meta) var(--col-status);
+  grid-template-columns: var(--col-train) var(--col-departs) var(--col-status);
   column-gap: var(--row-gap);
   align-items: center;
   padding: 0.15em var(--row-pad);
@@ -45,11 +44,12 @@
 /* White vertical line separates train number from departure time */
 .train-number {
   font-weight: 700;
+  font-size: clamp(0.65rem, 1.5vh, 1.5rem);
   border-right: 2px solid rgba(255, 255, 255, 0.28);
   padding-right: 0.4em;
 }
 
-/* Departure time + countdown on the same line */
+/* Departure time only — countdown moved to badges row */
 .train-time-col {
   display: flex;
   flex-direction: row;
@@ -80,22 +80,11 @@
   font-weight: 700;
 }
 
-/* Meta column — outer container stacks rows vertically */
-.train-meta {
+/* Status pushed to the far right edge */
+.train-status {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.15em;
-}
-
-/* Peak + Bikes side by side on one line */
-.train-meta-badges {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 0.3em;
-  flex-wrap: nowrap;
-  overflow: hidden;
+  justify-content: flex-end;
+  padding-right: 0.4em;
 }
 
 .badge-track { background: #0d1117; color: #94a3b8; border: 1px solid #475569; }
@@ -104,6 +93,19 @@
 .status-ontime    .flip-board { color: #4ade80; }
 .status-delayed   .flip-board { color: #f59e0b; }
 .status-cancelled .flip-board { color: #f87171; }
+
+/* Badges row — own line below the main train row */
+.train-badges-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.3em;
+  flex-wrap: nowrap;
+  overflow: hidden;
+  padding: 0.15em var(--row-pad) 0.2em calc(var(--row-pad) + var(--col-train) + var(--row-gap));
+  background: #0d0d1a;
+  flex-shrink: 0;
+}
 
 /* Badges */
 .meta-badge {
@@ -158,18 +160,18 @@
 
 .train-stop-row .flip-board {
   font-family: 'Courier New', Courier, monospace;
-  font-size: clamp(0.9rem, 1.65vh, 1.65rem);
+  font-size: clamp(0.6rem, 1.15vh, 1.15rem);
   color: #ffffff;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-/* Portrait TV — fix train number clipping and scale font down to fit */
+/* Portrait TV — scale font down to fit */
 @media (orientation: portrait) and (min-width: 900px) {
-  :root {
-    --col-departs: 17rem;
-  }
   .train-col {
     font-size: clamp(0.9rem, 2vh, 2rem);
+  }
+  .train-number {
+    font-size: clamp(0.55rem, 1.2vh, 1.2rem);
   }
 }
