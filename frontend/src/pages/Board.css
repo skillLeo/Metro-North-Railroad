@@ -106,9 +106,9 @@
   column-gap: var(--row-gap);
   padding: 0.15em var(--row-pad);
   background: #050510;
-  font-size: 0.85rem;
+  font-size: 1rem;
   letter-spacing: 0.2em;
-  color: #c9a55c;
+  color: #fde68a;
   text-transform: uppercase;
   flex-shrink: 0;
 }
