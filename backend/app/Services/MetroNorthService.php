@@ -46,6 +46,10 @@ class MetroNorthService
         $cancelledTrips = $this->getCancelledTripIds();
         $scheduleCache  = Cache::get('metro_north_stratford_schedule', []);
 
+        if (empty($scheduleCache)) {
+            $scheduleCache = $this->buildStratfordScheduleCache();
+        }
+
         $binaryData = $this->fetchProtobuf();
         if (!$binaryData) {
             return ['to_new_haven' => [], 'to_nyc' => []];
