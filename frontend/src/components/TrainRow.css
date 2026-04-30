@@ -67,7 +67,7 @@
 
 .train-countdown-label {
   font-family: 'Courier New', Courier, monospace;
-  font-size: 0.55rem;
+  font-size: clamp(0.6rem, 1.5vh, 1.5rem);
   color: #60a5fa;
   letter-spacing: 0.18em;
   font-weight: 700;
@@ -75,7 +75,7 @@
 }
 
 .train-countdown-wrap .flip-board {
-  font-size: 1rem;
+  font-size: clamp(0.9rem, 2.2vh, 2.2rem);
   color: #60a5fa;
   font-weight: 700;
 }

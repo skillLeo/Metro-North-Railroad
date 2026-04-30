@@ -92,8 +92,6 @@ export default function TrainRow({ train, time, status, flipKey, showCountdown, 
             {bikes ? 'BIKES' : 'NO BIKES'}
           </span>
         )}
-        <span className="meta-badge badge-arrival">ARRIVAL</span>
-        <span className="meta-badge badge-departure">DEPARTURE</span>
         {platform != null && (
           <span className="meta-badge badge-track">TRACK {platform}</span>
         )}
