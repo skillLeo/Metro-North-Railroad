@@ -14,6 +14,12 @@ Artisan::command('metro-north:build-schedule', function () {
     $service = app(MetroNorthService::class);
     $result = $service->buildStratfordScheduleCache();
     $this->info('Built schedule lookup: ' . count($result) . ' Stratford departures cached.');
+
+    if (count($result) === 0) {
+        $this->warn('Schedule cache was not rebuilt; keeping the existing board cache.');
+        return 1;
+    }
+
     $service->refreshCache();
     $this->info('Board cache refreshed with new schedule data.');
 })->purpose('Build the Stratford departure schedule cache from static GTFS');

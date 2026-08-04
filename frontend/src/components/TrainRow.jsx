@@ -74,7 +74,7 @@ export default function TrainRow({ train, time, status, flipKey, showCountdown, 
 
         {/* col 3 — status pushed to far right */}
         <div className={`train-col train-status ${statusClass(status)}`}>
-          <FlipBoard value={String(status)} minLength={12} flipKey={flipKey} />
+          <FlipBoard value={String(status)} minLength={1} flipKey={flipKey} />
         </div>
 
       </div>

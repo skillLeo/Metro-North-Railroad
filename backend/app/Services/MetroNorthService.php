@@ -18,17 +18,27 @@ class MetroNorthService
 
     public function getBoard(): array
     {
-        return Cache::remember(self::CACHE_KEY, self::CACHE_TTL, function () {
-            return $this->fetchAndProcess();
-        });
+        try {
+            return Cache::remember(self::CACHE_KEY, self::CACHE_TTL, function () {
+                return $this->fetchAndProcess();
+            });
+        } catch (\Throwable $e) {
+            \Log::error('MetroNorthService getBoard failed', ['error' => $e->getMessage()]);
+            return $this->emptyBoard();
+        }
     }
 
     public function getAlerts(): array
     {
-        return Cache::remember('metro_north_alerts', self::CACHE_TTL, function () {
-            $response = Http::timeout(10)->withoutVerifying()->get(self::MTA_ALERTS_URL);
-            return $response->successful() ? $response->json() : [];
-        });
+        try {
+            return Cache::remember('metro_north_alerts', self::CACHE_TTL, function () {
+                $response = Http::timeout(10)->connectTimeout(5)->withoutVerifying()->get(self::MTA_ALERTS_URL);
+                return $response->successful() ? $response->json() : [];
+            });
+        } catch (\Throwable $e) {
+            \Log::error('MetroNorthService getAlerts failed', ['error' => $e->getMessage()]);
+            return [];
+        }
     }
 
     public function refreshCache(): void
@@ -43,17 +53,14 @@ class MetroNorthService
     {
         $stopId         = (string) env('STRATFORD_STOP_ID', '143');
         $now            = time();
-        $cancelledTrips = $this->getCancelledTripIds();
-        $scheduleCache  = Cache::get('metro_north_stratford_schedule', []);
-
-        if (empty($scheduleCache)) {
-            $scheduleCache = $this->buildStratfordScheduleCache();
-        }
 
         $binaryData = $this->fetchProtobuf();
         if (!$binaryData) {
-            return ['to_new_haven' => [], 'to_nyc' => []];
+            return $this->emptyBoard();
         }
+
+        $cancelledTrips = $this->getCancelledTripIds();
+        $scheduleCache  = Cache::get('metro_north_stratford_schedule', []);
 
         $feed = new FeedMessage();
         $feed->mergeFromString($binaryData);
@@ -178,6 +185,7 @@ class MetroNorthService
         try {
             $apiKey   = env('MTA_API_KEY', '');
             $response = Http::timeout(10)
+                ->connectTimeout(5)
                 ->withoutVerifying()
                 ->withHeaders(array_filter(['x-api-key' => $apiKey]))
                 ->get(self::MTA_FEED_URL);
@@ -186,7 +194,7 @@ class MetroNorthService
                 \Log::warning('MetroNorthService: MTA returned 403 — check MTA_API_KEY in .env');
             }
             return $response->successful() ? $response->body() : null;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             \Log::error('MetroNorthService fetch failed', ['error' => $e->getMessage()]);
             return null;
         }
@@ -226,7 +234,7 @@ class MetroNorthService
      *     'stops' => ['Bridgeport', 'Milford', 'West Haven', 'New Haven'],
      *   ]
      *
-     * Cached for 24 hours. Run via: php artisan metro-north:build-schedule
+     * Cached until the next successful rebuild. Run via: php artisan metro-north:build-schedule
      */
     public function buildStratfordScheduleCache(): array
     {
@@ -234,7 +242,7 @@ class MetroNorthService
         $tmpFile = tempnam(sys_get_temp_dir(), 'gtfsmnr') . '.zip';
 
         try {
-            $response = Http::timeout(120)->withoutVerifying()->get($zipUrl);
+            $response = Http::timeout(30)->connectTimeout(10)->withoutVerifying()->get($zipUrl);
             if (!$response->successful()) {
                 \Log::error('buildStratfordScheduleCache: failed to download GTFS zip');
                 return [];
@@ -358,10 +366,13 @@ class MetroNorthService
                 ];
             }
 
-            Cache::put('metro_north_stratford_schedule', $depTimeToInfo, 86400);
+            Cache::forever('metro_north_stratford_schedule', $depTimeToInfo);
             \Log::info('buildStratfordScheduleCache: cached ' . count($depTimeToInfo) . ' Stratford departures');
             return $depTimeToInfo;
 
+        } catch (\Throwable $e) {
+            \Log::error('buildStratfordScheduleCache failed', ['error' => $e->getMessage()]);
+            return [];
         } finally {
             if (file_exists($tmpFile)) @unlink($tmpFile);
         }
@@ -377,5 +388,10 @@ class MetroNorthService
             return "Delayed {$minutes} min";
         }
         return 'On Time';
+    }
+
+    private function emptyBoard(): array
+    {
+        return ['to_new_haven' => [], 'to_nyc' => []];
     }
 }
