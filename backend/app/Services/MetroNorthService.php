@@ -5,6 +5,8 @@ namespace App\Services;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Google\Transit\Realtime\FeedMessage;
+use Google\Transit\Realtime\TripDescriptor\ScheduleRelationship as TripScheduleRelationship;
+use Google\Transit\Realtime\TripUpdate\StopTimeUpdate\ScheduleRelationship as StopTimeScheduleRelationship;
 
 class MetroNorthService
 {
@@ -80,32 +82,39 @@ class MetroNorthService
                 continue;
             }
 
-            $tripId      = $trip->getTripId();
+            // Only trips actively operating per the live feed. A trip the
+            // agency has pulled from service (CANCELED/DELETED) is not a
+            // real upcoming departure and must not appear on the board.
+            $tripScheduleRelationship = $trip->getScheduleRelationship();
+            if (in_array($tripScheduleRelationship, [
+                TripScheduleRelationship::CANCELED,
+                TripScheduleRelationship::DELETED,
+            ], true)) {
+                continue;
+            }
+
+            $tripId       = $trip->getTripId();
             $vehicleLabel = $tripUpdate->getVehicle()?->getLabel() ?? '';
             $trainNumber  = $vehicleLabel ?: $tripId;
-
-            // Determine direction from stop sequence (MTA doesn't populate direction_id in RT feed)
-            $allStops = [];
-            foreach ($tripUpdate->getStopTimeUpdate() as $stu) {
-                $allStops[] = (int) $stu->getStopId();
-            }
-            if (count($allStops) < 2) {
-                continue;
-            }
-            $firstStop = $allStops[0];
-            $lastStop  = $allStops[count($allStops) - 1];
-            if ($firstStop < $lastStop) {
-                $directionId = self::DIR_NEW_HAVEN;
-            } elseif ($firstStop > $lastStop) {
-                $directionId = self::DIR_NYC;
-            } else {
-                continue;
-            }
-
-            $isCancelled = in_array($tripId, $cancelledTrips, true);
+            $isCancelled  = in_array($tripId, $cancelledTrips, true);
 
             foreach ($tripUpdate->getStopTimeUpdate() as $stopTimeUpdate) {
                 if ((string) $stopTimeUpdate->getStopId() !== $stopId) {
+                    continue;
+                }
+
+                // SKIPPED means the train passes Stratford without stopping;
+                // NO_DATA means the feed has no real prediction for this stop.
+                // Either way arrival/departure fields may still be present
+                // (they're optional, not forbidden, for these states), so
+                // this must be checked explicitly rather than relying on a
+                // null departure check alone — otherwise a skipped/express
+                // trip can show up as a real departure.
+                $stopScheduleRelationship = $stopTimeUpdate->getScheduleRelationship();
+                if (in_array($stopScheduleRelationship, [
+                    StopTimeScheduleRelationship::SKIPPED,
+                    StopTimeScheduleRelationship::NO_DATA,
+                ], true)) {
                     continue;
                 }
 
@@ -133,23 +142,28 @@ class MetroNorthService
 
                 $schedInfo = $scheduleCache[$scheduledSecs] ?? null;
 
-                // Support both old format (string) and new format (array)
-                if (is_array($schedInfo)) {
-                    $trainName = $schedInfo['name'] ?: $trainNumber;
-                    $peak      = $schedInfo['peak'];
-                    $stops     = $schedInfo['stops'] ?? [];
+                // Direction must come from the static schedule's direction_id
+                // (0 = New Haven, 1 = NYC) — MTA's real-time feed always
+                // reports direction_id = 0 regardless of actual direction, so
+                // TripDescriptor::getDirectionId() can never be trusted, and
+                // raw stop_id ordering is not a reliable substitute either.
+                // If the live departure can't be matched to a static
+                // scheduled time, direction is unknown and the trip is
+                // excluded rather than guessed.
+                $directionId = is_array($schedInfo) ? ($schedInfo['direction'] ?? null) : null;
+                if ($directionId !== self::DIR_NEW_HAVEN && $directionId !== self::DIR_NYC) {
+                    continue;
+                }
 
-                    // Metro North GTFS often has bikes_allowed=0 (unknown).
-                    // Derive from peak: peak trains = no bikes, off-peak = bikes ok.
-                    $bikes = $schedInfo['bikes'];
-                    if ($bikes === null && $peak !== null) {
-                        $bikes = !$peak;
-                    }
-                } else {
-                    $trainName = $schedInfo ?: $trainNumber;
-                    $peak      = null;
-                    $bikes     = null;
-                    $stops     = [];
+                $trainName = $schedInfo['name'] ?: $trainNumber;
+                $peak      = $schedInfo['peak'];
+                $stops     = $schedInfo['stops'] ?? [];
+
+                // Metro North GTFS often has bikes_allowed=0 (unknown).
+                // Derive from peak: peak trains = no bikes, off-peak = bikes ok.
+                $bikes = $schedInfo['bikes'];
+                if ($bikes === null && $peak !== null) {
+                    $bikes = !$peak;
                 }
 
                 $entry = [
@@ -228,10 +242,11 @@ class MetroNorthService
     /**
      * Downloads the Metro North GTFS static zip and builds a schedule cache:
      *   departure_time_seconds_since_midnight => [
-     *     'name'  => '1274',
-     *     'peak'  => true|false|null,
-     *     'bikes' => true|false|null,
-     *     'stops' => ['Bridgeport', 'Milford', 'West Haven', 'New Haven'],
+     *     'name'      => '1274',
+     *     'direction' => 0|1|null,  // 0 = New Haven, 1 = NYC, per trips.txt direction_id
+     *     'peak'      => true|false|null,
+     *     'bikes'     => true|false|null,
+     *     'stops'     => ['Bridgeport', 'Milford', 'West Haven', 'New Haven'],
      *   ]
      *
      * Cached until the next successful rebuild. Run via: php artisan metro-north:build-schedule
@@ -264,6 +279,7 @@ class MetroNorthService
             $rIdx   = array_search('route_id',        $header);
             $pkIdx  = array_search('peak_offpeak',    $header); // may not exist
             $bkIdx  = array_search('bikes_allowed',   $header);
+            $dirIdx = array_search('direction_id',    $header);
 
             $tripInfo = [];
             foreach ($lines as $line) {
@@ -272,7 +288,10 @@ class MetroNorthService
                 if (($cols[$rIdx] ?? '') !== self::NEW_HAVEN_LINE_ROUTE_ID) continue;
                 $tid = $cols[$tidIdx] ?? '';
                 $tripInfo[$tid] = [
-                    'name'  => $cols[$snIdx] ?? '',
+                    'name'      => $cols[$snIdx] ?? '',
+                    'direction' => ($dirIdx !== false && $dirIdx !== -1 && ($cols[$dirIdx] ?? '') !== '')
+                                ? (int) $cols[$dirIdx]
+                                : null,
                     'peak'  => ($pkIdx !== false && $pkIdx !== -1)
                                 ? ($cols[$pkIdx] ?? '0') === '1'
                                 : null,
@@ -359,10 +378,11 @@ class MetroNorthService
                     $stops = array_values($tripStops[$tid]);
                 }
                 $depTimeToInfo[$entry['secs']] = [
-                    'name'  => $info['name'],
-                    'peak'  => $info['peak'],
-                    'bikes' => $info['bikes'],
-                    'stops' => $stops,
+                    'name'      => $info['name'],
+                    'direction' => $info['direction'],
+                    'peak'      => $info['peak'],
+                    'bikes'     => $info['bikes'],
+                    'stops'     => $stops,
                 ];
             }
 
